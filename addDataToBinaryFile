@@ -1,5 +1,5 @@
 # binary dosyaya veri ekleme ve okuma
-
+# aynı zamanda dinamik bellek yönetimi konusunda ilerledik , çalışıyor mu tam emin olmamakla birlikte normal kullanımda hata vermedi hiç.
 
 #include <stdio.h>
 #include <stdlib.h>
