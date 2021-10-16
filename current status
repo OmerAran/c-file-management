@@ -1,0 +1,112 @@
+# current status
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+
+struct sinif{
+    int no ;
+    int dersKodu ;
+    int puan ;
+
+};
+struct sinif* ogrenciler;
+
+
+FILE *indexfile ;// index FILE
+
+void indexDosyasiOlustur(){
+    
+    indexfile=fopen("/Users/omeraran/desktop/okul.txt", "w"); //yazma işlemi modunda okul adında txt dosyası oluşturur.
+    
+    //dosyanın açılıp açılmadığı hakkında bilgi almak için if-else bloğu.
+    if (indexfile==NULL)
+        printf("index dosyası açılamadı.");
+    else
+        printf("index dosyası başarıyla açıldı.");
+    
+ fclose(indexfile);
+    
+}
+
+void kayitEkle(){
+    
+  indexfile = fopen("/Users/omeraran/desktop/okul.txt", "a");
+    //kayit ekleme işlemi birazdan.
+}
+void kayitBul(){
+    int sayi ,ort,buyuk,kucuk  ;
+        buyuk = 50-1 ;
+        kucuk =0 ;
+        
+        
+        printf("hangi öğrencinin bilgilerini istiyorsun, listedeki sıra nosunu yazınız. :  ");
+        scanf("%d", &sayi) ;
+    
+    while(buyuk>=kucuk){
+          ort = (buyuk+kucuk)/2 ;
+          if(sayi==ort){
+          printf("bulundu. \n");
+          //   printf("öğrencinin \n numarası : %d \n ders kodu :  %d  \n puan :  %d \n",ogr[sayi]->ogrNo,ogr[sayi]->dersKodu,ogr[sayi]->puan); //buradaki -> düzeltilecek.
+             break;
+      }
+      else if (sayi < ort){
+          buyuk = ort-1 ;
+          printf("devam böyle \n");
+      }
+      else if (sayi > ort){
+          kucuk = ort+1 ;
+      }
+      else{
+          printf("hata ! ! !") ;
+      }
+      }
+}
+
+void kayitSil(){
+    //binary search ile kaydı bul
+    //bulduğun kaydı sil.
+    //index dosyasına yansıt.
+    
+}
+void kayitGuncelle(){
+    //binary search ile kaydı bul (hatta kayitBul() kullan.)
+    //sadece puan güncellenecek. ogrenciler[2].puan =40 ;
+    
+}
+void veriDosyasiniGoster(){
+    //tüm kayıtları listele
+    //
+}
+
+void indexDosyasiniGoster(){
+    //tüm kayıtlatı listele
+    //for döngüsüyle ekrana yazdır.
+    indexfile = fopen("/Users/omeraran/desktop/indexfile.txt", "r");
+    for (int i=0 ; i<50 ; i++) { //50yi düzelt.
+        fread(&ogrenciler[i].no, 1, 1, indexfile);
+        fread(&ogrenciler[i].dersKodu, 1, 1, indexfile);
+        fread(&ogrenciler[i].puan, 1, 1, indexfile);
+    }
+}
+void indexDosyasiniSil(){
+    
+   int isDeleted =  remove("/Users/omeraran/desktop/indexfile.txt");
+    if (isDeleted==0)
+        printf("İndeks dosyası başarıyla silindi.");
+    else
+        printf("İndex dosyası silinirken bir hata oluştu.") ;
+}
+
+int main(int argc, const char * argv[]) {
+    
+    ogrenciler = (struct sinif*)malloc(100*sizeof(struct sinif)); //dynamic memory management
+    
+    
+    
+    
+    free(ogrenciler);
+    return 0;
+}
