@@ -1,0 +1,32 @@
+# Binary Search
+
+
+/* binary search aşaması tamamlandı!
+    int sayi ,ort,buyuk,kucuk  ;
+    buyuk = 50-1 ;
+    kucuk =0 ;
+    
+    
+    printf("hangi öğrencinin bilgilerini istiyorsun, listedeki sıra nosunu yazınız. :  ");
+    scanf("%d", &sayi) ;
+    
+    while(buyuk>=kucuk){
+        ort = (buyuk+kucuk)/2 ;
+        if(sayi==ort){
+        printf("bulundu. \n");
+            printf("öğrencinin \n numarası : %d \n ders kodu :  %d  \n puan :  %d \n",ogr[sayi]->ogrNo,ogr[sayi]->dersKodu,ogr[sayi]->puan); //buradaki-> düzeltilecek.
+           break;
+    }
+    else if (sayi < ort){
+        buyuk = ort-1 ;
+        printf("devam böyle \n");
+    }
+    else if (sayi > ort){
+        kucuk = ort+1 ;
+    }
+    else{
+        printf("hata ! ! !") ;
+    }
+    }
+        */
+    
