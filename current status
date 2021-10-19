@@ -1,112 +1,232 @@
 # current status
 
-
-
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 
+int sabit = 50 ;
 
-struct sinif{
-    int no ;
-    int dersKodu ;
-    int puan ;
+struct kayit{
+    int ogrno;
+    int derskodu;
+    int puan;
 
 };
-struct sinif* ogrenciler;
 
+struct kayit *sinif;
 
-FILE *indexfile ;// index FILE
+FILE *ogrinfo;
+FILE *binfile ;
 
 void indexDosyasiOlustur(){
-    
-    indexfile=fopen("/Users/omeraran/desktop/okul.txt", "w"); //yazma işlemi modunda okul adında txt dosyası oluşturur.
-    
-    //dosyanın açılıp açılmadığı hakkında bilgi almak için if-else bloğu.
-    if (indexfile==NULL)
-        printf("index dosyası açılamadı.");
-    else
-        printf("index dosyası başarıyla açıldı.");
-    
- fclose(indexfile);
-    
+
+    binfile=fopen("/Users/omeraran/desktop/okul.bin", "wb"); //yazma iþlemi modunda okul adında binary dosyasý olusturur.
+
+    for (int i = 0; i<sabit; i++) {
+        fprintf(binfile, "%d \t %d\t %d\n",sinif[i].ogrno,sinif[i].derskodu,sinif[i].puan);
+    }
+    fclose(binfile);
+
+    ogrinfo = fopen("/Users/omeraran/desktop/veri.txt","w");
+    binfile = fopen("/Users/omeraran/desktop/okul.bin","rb");
+
+
+    fprintf(ogrinfo,"no   ders kodu   Not\n-------------------------------------------------- \n");
+
+    if (ogrinfo==NULL) {
+        printf("Dosya olusturalamadi");
+    }
+    else{
+        while(!feof(binfile)){
+            fprintf(ogrinfo,"%c",fgetc(binfile));
+        }
+    }
+    fclose(ogrinfo);
+    fclose(binfile);
+}
+
+void siralama(){
+    int i,j,gecici;
+
+    for(i=0;i<sabit;i++){
+        for(j=1;j<sabit-i;j++){
+            if(sinif[j-1].ogrno>sinif[j].ogrno){
+                gecici=sinif[j].ogrno;
+                sinif[j].ogrno=sinif[j-1].ogrno;
+                sinif[j-1].ogrno=gecici;
+
+                gecici=sinif[j].derskodu;
+                sinif[j].derskodu=sinif[j-1].derskodu;
+                sinif[j-1].derskodu=gecici;
+
+                gecici=sinif[j].puan;
+                sinif[j].puan=sinif[j-1].puan;
+                sinif[j-1].puan=gecici;
+
+            }
+        }
+    }
+    indexDosyasiOlustur();
+}
+
+int Binarysearch(int aranan){
+    siralama();
+    int buyuk=sabit,kucuk=0;
+
+    while(kucuk<=buyuk){
+
+        int orta=(buyuk+kucuk)/2;
+
+        if(aranan == sinif[orta].ogrno){
+            return orta;
+        }
+        else if(aranan<sinif[orta].ogrno){
+            buyuk=orta-1;
+        }
+        else{
+            kucuk = orta+1;
+        }
+
+    }
+    return -1;
+}
+
+
+void indeksDosyasiniGoster(){
+
+    ogrinfo = fopen("/Users/omeraran/desktop/veri.txt","r");
+
+    while(!feof(ogrinfo)){
+        putchar(fgetc(ogrinfo));
+    }
+
+    fclose(ogrinfo);
+
+}
+
+void kayitGuncelle(int i ){
+
+    int a=Binarysearch(i);
+    printf("%d ogrencinin notu:%d ",sinif[a].ogrno,sinif[a].puan);
+    printf("\nYeni notunu giriniz: ");
+    int yeni;
+    scanf("%d",&yeni);
+    sinif[a].puan=yeni;
+
+    printf("Yeni notu: %d",sinif[a].puan);
+
+    indexDosyasiOlustur();
+
 }
 
 void kayitEkle(){
-    
-  indexfile = fopen("/Users/omeraran/desktop/okul.txt", "a");
-    //kayit ekleme işlemi birazdan.
-}
-void kayitBul(){
-    int sayi ,ort,buyuk,kucuk  ;
-        buyuk = 50-1 ;
-        kucuk =0 ;
-        
-        
-        printf("hangi öğrencinin bilgilerini istiyorsun, listedeki sıra nosunu yazınız. :  ");
-        scanf("%d", &sayi) ;
-    
-    while(buyuk>=kucuk){
-          ort = (buyuk+kucuk)/2 ;
-          if(sayi==ort){
-          printf("bulundu. \n");
-          //   printf("öğrencinin \n numarası : %d \n ders kodu :  %d  \n puan :  %d \n",ogr[sayi]->ogrNo,ogr[sayi]->dersKodu,ogr[sayi]->puan); //buradaki -> düzeltilecek.
-             break;
-      }
-      else if (sayi < ort){
-          buyuk = ort-1 ;
-          printf("devam böyle \n");
-      }
-      else if (sayi > ort){
-          kucuk = ort+1 ;
-      }
-      else{
-          printf("hata ! ! !") ;
-      }
-      }
+
+    printf("Yeni ogrencinin no: ");
+    scanf("%d",&sinif[sabit].ogrno);
+    printf("Yeni ogrencinin derskodu: ");
+    scanf("%d",&sinif[sabit].derskodu);
+    printf("Yeni ogrencinin puani: ");
+    scanf("%d",&sinif[sabit].puan);
+    sabit++;
+
+    indexDosyasiOlustur();
 }
 
-void kayitSil(){
-    //binary search ile kaydı bul
-    //bulduğun kaydı sil.
-    //index dosyasına yansıt.
+
+void indeksDosyasiniSil(){
+    int sonuc;
+
+    printf("Dosya silinecek! Devam edecek misiniz (E/H)?");
+
+        sonuc = remove("/Users/omeraran/desktop/veri.txt");
+
     
+    if(sonuc == 0){
+        printf("\n\nDosya basariyla silindi.");
+    }
+    else{
+        printf("Dosya silinemedi");
+    }
+
 }
-void kayitGuncelle(){
-    //binary search ile kaydı bul (hatta kayitBul() kullan.)
-    //sadece puan güncellenecek. ogrenciler[2].puan =40 ;
-    
+
+void kayitBul(){
+    printf("Ogrencinin numarasini giriniz: ");
+    int i ;
+    scanf("%d",&i);
+    int deg=Binarysearch(i);
+    if(deg == -1){
+        printf("Ogrenci bulunamadi.");
+    }
+    else{
+        printf("%d nolu ogrencinin derskodu: %d\tpuani:%d",sinif[deg].ogrno,sinif[deg].derskodu,sinif[deg].puan);
+    }
+
 }
 void veriDosyasiniGoster(){
-    //tüm kayıtları listele
-    //
-}
 
-void indexDosyasiniGoster(){
-    //tüm kayıtlatı listele
-    //for döngüsüyle ekrana yazdır.
-    indexfile = fopen("/Users/omeraran/desktop/indexfile.txt", "r");
-    for (int i=0 ; i<50 ; i++) { //50yi düzelt.
-        fread(&ogrenciler[i].no, 1, 1, indexfile);
-        fread(&ogrenciler[i].dersKodu, 1, 1, indexfile);
-        fread(&ogrenciler[i].puan, 1, 1, indexfile);
+    binfile = fopen("/Users/omeraran/desktop/okul.bin", "rb");
+    while(!feof(binfile)){
+        putchar(fgetc(binfile));
     }
-}
-void indexDosyasiniSil(){
-    
-   int isDeleted =  remove("/Users/omeraran/desktop/indexfile.txt");
-    if (isDeleted==0)
-        printf("İndeks dosyası başarıyla silindi.");
-    else
-        printf("İndex dosyası silinirken bir hata oluştu.") ;
+    fclose(binfile);
 }
 
-int main(int argc, const char * argv[]) {
-    
-    ogrenciler = (struct sinif*)malloc(100*sizeof(struct sinif)); //dynamic memory management
-    
-    
-    
-    
-    free(ogrenciler);
+int main()
+{
+    sinif = (struct kayit*)malloc(100*sizeof(struct kayit));
+    for(int i= 0 ;i<sabit;i++){
+        sinif[i].ogrno=rand()%100+1;
+        sinif[i].derskodu=rand()%3+1;
+        sinif[i].puan=rand()%50+50;
+    }
+
+    int sec=1;
+
+    while(sec !=0){
+        printf("\n1-)index dosyasi olustur.\n");
+        printf("2-)Kayit guncelle\n");
+        printf("3-)Kayit ekle\n");
+        printf("4-)indeks dosyasini goster\n");
+        printf("5-)indeks dosyasini siler\n");
+        printf("6-)Kayit bul\n");
+        printf("7-)Veri dosyasini goster\n");
+        printf("0-)Cikis\n");
+        printf("Birini seciniz lutfen: ");
+        scanf("%d",&sec);
+
+        switch (sec){
+            case 1:
+                indexDosyasiOlustur();
+                break;
+                case 2:
+                printf("Ogrenci numarasini giriniz: ");
+                int a;
+                scanf("%d",&a);
+                kayitGuncelle(a);
+                break;
+            case 3:
+                kayitEkle();
+                break;
+            case 4:
+                indeksDosyasiniGoster();
+                break;
+            case 5:
+                indeksDosyasiniSil();
+                break;
+            case 6:
+                kayitBul();
+                break;
+            case 7:
+                veriDosyasiniGoster();
+                break;
+            default:
+                printf("Yanlis bir sayi girdiniz tekrar deneyiniz..");
+                break;
+
+        }
+
+    }
     return 0;
+
 }
