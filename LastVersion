@@ -105,12 +105,17 @@ int Binarysearch(int aranan){
 
 
 void indeksDosyasiniGoster(){
-    siralama();
+    
     indexFile = fopen("/Users/omeraran/desktop/veri.txt","r");
-
+    if (indexFile==NULL) {
+        printf("İstenen Dosya Yok.");
+    }
+    else{
     while(!feof(indexFile)){
         putchar(fgetc(indexFile));
     }
+    }
+    
 
     fclose(indexFile);
 
@@ -118,21 +123,21 @@ void indeksDosyasiniGoster(){
 
 void kayitGuncelle(int i ){
 
-    int a=Binarysearch(i);
-    printf("%d numaralı ogrencinin ; \nnotları: %d\t %d\nHangi dersi güncelleyecekseniz o dersin kodunu yazınız : ",sinif[a].ogrno,sinif[a].puan,sinif[a].puan2);
+    int gunNo=Binarysearch(i);
+    printf("%d numaralı ogrencinin ; \nnotları: %d\t %d\nHangi dersi güncelleyecekseniz o dersin kodunu yazınız : ",sinif[gunNo].ogrno,sinif[gunNo].puan,sinif[gunNo].puan2);
     int hangiDers ,yeniPuan;;
     scanf("%d",&hangiDers);
-    if (hangiDers == sinif[a].derskodu) {
+    if (hangiDers == sinif[gunNo].derskodu) {
         printf("Yeni puanı giriniz : ") ;
         scanf("%d",&yeniPuan);
-        sinif[a].puan=yeniPuan;
-        printf("Yeni notu: %d olarak güncellendi.",sinif[a].puan);
+        sinif[gunNo].puan=yeniPuan;
+        printf("Yeni notu: %d olarak güncellendi.",sinif[gunNo].puan);
     }
-    else if (hangiDers == sinif[a].derskodu2){
+    else if (hangiDers == sinif[gunNo].derskodu2){
         printf("Yeni puanı giriniz : ") ;
         scanf("%d",&yeniPuan);
-        sinif[a].puan2=yeniPuan;
-        printf("Yeni notu: %d olarak güncellendi.",sinif[a].puan2);
+        sinif[gunNo].puan2=yeniPuan;
+        printf("Yeni notu: %d olarak güncellendi.",sinif[gunNo].puan2);
     }
     else{
         printf("////////////////// Bu öğrenci girmiş olduğunuz dersi almıyor.//////////////////");
@@ -143,12 +148,27 @@ void kayitGuncelle(int i ){
 }
 
 void kayitEkle(){
-
-    printf("////////////////// \nSırasıyla Yeni ogrencinin no, ders kodu,puanı , 2. ders kodu ve 2. ders puanını giriniz //////////////////\n");
-    scanf("%d\t %d\t %d\t %d\t %d",&sinif[sabit].ogrno,&sinif[sabit].derskodu,&sinif[sabit].puan,&sinif[sabit].derskodu2,&sinif[sabit].puan2);
-
-    sabit++;
-    indexDosyasiOlustur();
+    
+    int yeniOgrNo ;
+    printf("\n////////////////// Yeni ogrencinin nosunu giriniz : //////////////////\n");
+    scanf("%d", &yeniOgrNo);
+  
+    if (Binarysearch(yeniOgrNo)==-1) {
+        
+        sinif[sabit].ogrno =yeniOgrNo ;
+        printf("////////////////// \nSırasıyla Yeni ogrencinin ders kodu,puanı , 2. ders kodu ve 2. ders puanını giriniz //////////////////\n");
+        scanf("%d %d %d %d",&sinif[sabit].derskodu,&sinif[sabit].puan,&sinif[sabit].derskodu2,&sinif[sabit].puan2);
+        
+        siralama();
+        sabit = sabit+1 ;
+        
+        
+    }
+    else
+        printf("/////////////////////// Bu numaraya sahip ogrenci bulunmaktadır..! ///////////////////////");
+    
+    
+    
 }
 
 
@@ -171,39 +191,53 @@ void kayitBul(){
     printf("Bulmak istediğiniz ogrencinin numarasini giriniz: ");
     int i ;
     scanf("%d",&i);
-    int deg=Binarysearch(i);
-    if(deg == -1){
+    int varMi=Binarysearch(i);
+    if(varMi == -1){
         printf("////////////////// Ogrenci bulunamadi. //////////////////");
     }
     else{
         printf("////////////////// \n %d nolu ogrencinin \n birinci derskodu: %d\n birinci ders puani:%d\n ikinci derskodu: %d\n ikinci ders puani:%d \n//////////////////// \n",
-               sinif[deg].ogrno,sinif[deg].derskodu,sinif[deg].puan,sinif[deg].derskodu2,sinif[deg].puan2);
+               sinif[varMi].ogrno,sinif[varMi].derskodu,sinif[varMi].puan,sinif[varMi].derskodu2,sinif[varMi].puan2);
     }
 
 }
 void veriDosyasiniGoster(){
-    siralama();
+  
     binFile = fopen("/Users/omeraran/desktop/okul.bin", "rb");
-    while(!feof(binFile)){
-        putchar(fgetc(binFile));
+    
+    if (binFile==NULL) {
+        printf("Veri Dosyası Bulunamadı.");
     }
+    else{
+        while(!feof(binFile)){
+            putchar(fgetc(binFile));
+        }
+    }
+   
+   
     fclose(binFile);
 }
 void kayitSil(){
     printf("Silmek istediginiz ogrencinin no: ");
-    int a;
-    scanf("%d",&a);
-    int aranan=Binarysearch(a);
-
-    for(int i =aranan ;i<sabit;i++){
-        sinif[i].derskodu2=sinif[i+1].derskodu2;
-        sinif[i].puan2=sinif[i+1].puan2;
-        sinif[i].derskodu=sinif[i+1].derskodu;
-        sinif[i].puan=sinif[i+1].puan;
-        sinif[i].ogrno=sinif[i+1].ogrno;
+    int silOgrNo;
+    scanf("%d",&silOgrNo);
+    
+    int aranan=Binarysearch(silOgrNo);
+    if (aranan==-1) {
+        printf("Kullanıcı zaten yok");
     }
-    printf("Kullanıcı Başarıyla Silindi.\n");
-    sabit--;
+    else{
+        for(int i =aranan ;i<sabit;i++){
+            sinif[i].derskodu2=sinif[i+1].derskodu2;
+            sinif[i].puan2=sinif[i+1].puan2;
+            sinif[i].derskodu=sinif[i+1].derskodu;
+            sinif[i].puan=sinif[i+1].puan;
+            sinif[i].ogrno=sinif[i+1].ogrno;
+        }
+        printf("Kullanıcı Başarıyla Silindi.\n");
+        sabit--;
+    }
+    
     indexDosyasiOlustur();
 }
 
@@ -263,7 +297,7 @@ int main()
                         break;
                 
                     case 6:
-                     kayitEkle();
+                      kayitEkle();
                       break;
                 
                     case 7:
@@ -293,6 +327,9 @@ int main()
     
     
    
+
+
+
 
 
 
